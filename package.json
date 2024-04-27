@@ -40,9 +40,13 @@
     "typecheck": "tsc --noEmit",
     "release": "bumpp && nr publish"
   },
+  "dependencies": {
+    "ast-kit": "^0.12.1"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^2.16.0",
     "@antfu/ni": "^0.21.12",
+    "@babel/types": "^7.24.0",
     "@types/node": "^20.12.7",
     "@types/vscode": "^1.88.0",
     "@vscode/vsce": "^2.26.0",
