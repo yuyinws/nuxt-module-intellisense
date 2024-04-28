@@ -1,6 +1,5 @@
 import { dirname, resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
-import { channel } from './utils'
 
 function guessIsNuxtModule(dependency: string) {
   return dependency.includes('nuxt') && dependency !== 'nuxt'
