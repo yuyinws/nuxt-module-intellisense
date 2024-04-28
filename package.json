@@ -2,7 +2,7 @@
   "publisher": "yuyinws",
   "name": "nuxt-module-intellisense",
   "displayName": "Nuxt Module Intellisense",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "description": "Intelligent Nuxt Module autocompletes for VS Code",
   "author": "yuyinws",
