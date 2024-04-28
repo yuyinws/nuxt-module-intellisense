@@ -1,20 +1,22 @@
 import type { CompletionItem, ExtensionContext } from 'vscode'
-import { languages, window } from 'vscode'
+import { languages } from 'vscode'
 import type { WithScope } from 'ast-kit'
 import { babelParse, walkAST } from 'ast-kit'
 import type { Node } from '@babel/types'
+import { parsePkg } from './pkg'
+import { channel } from './utils'
 
 export function activate(context: ExtensionContext) {
-  const channel = window.createOutputChannel('Nuxt Module Intellisense')
-  channel.appendLine('Nuxt Module Intellisense')
+  channel.appendLine('Nuxt Module Intellisense activated')
   const provider = languages.registerCompletionItemProvider(
     ['javascript', 'typescript'],
     {
       async provideCompletionItems(document, position) {
         if (document.fileName.includes('nuxt.config')) {
-          const fileContent = document.getText()
+          const configFileContent = document.getText()
+          const nuxtModules = parsePkg(document.fileName)
 
-          const ast = babelParse(fileContent, '', {
+          const ast = babelParse(configFileContent, '', {
             plugins: ['typescript'],
           })
 
@@ -22,20 +24,30 @@ export function activate(context: ExtensionContext) {
 
           walkAST<WithScope<Node>>(ast, {
             enter(node) {
-              if (node.type === 'ObjectProperty' && node.key.loc?.identifierName === 'modules' && node.value.type === 'ArrayExpression') {
+              if (node.type === 'ObjectProperty'
+                && node.key.loc?.identifierName === 'modules'
+                && node.value.type === 'ArrayExpression') {
                 const currentModules = node.value.elements
+                const currentModulesNames = currentModules.map((item) => {
+                  // @ts-expect-error missing type
+                  return item?.value
+                })
 
-                const findIndex = currentModules.findIndex((item) => {
+                const isHitOnModules = currentModules.findIndex((item) => {
                   if (item?.loc?.start.line === position.line + 1 && item?.loc?.start.column === position.character - 1)
                     return true
 
                   return false
                 })
 
-                if (findIndex > -1) {
-                  completionItems = [
-                    { label: 'hello' },
-                  ]
+                if (isHitOnModules > -1) {
+                  completionItems = nuxtModules.filter(item => !currentModulesNames.includes(item)).map((item) => {
+                    return {
+                      label: item,
+                      kind: 3,
+                      insertText: item,
+                    }
+                  })
                 }
               }
             },
@@ -46,7 +58,6 @@ export function activate(context: ExtensionContext) {
         return []
       },
     },
-    // 通过引号触发
     '\'',
     '\"',
   )
