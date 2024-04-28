@@ -4,7 +4,7 @@
   "displayName": "Nuxt Module Intellisense",
   "version": "0.0.1",
   "private": true,
-  "description": "",
+  "description": "Intelligent Nuxt Module autocompletes for VS Code",
   "author": "yuyinws",
   "license": "MIT",
   "homepage": "https://github.com/yuyinws/nuxt-module-intellisense#readme",
