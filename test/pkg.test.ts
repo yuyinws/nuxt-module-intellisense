@@ -12,12 +12,30 @@ describe('pkg', () => {
   it('parse', () => {
     expect(parsePkg(fixturePath)).toMatchInlineSnapshot(`
       [
-        "@pinia-plugin-persistedstate/nuxt",
-        "@pinia/nuxt",
-        "@unocss/nuxt",
-        "@vant/nuxt",
-        "@vueuse/nuxt",
-        "dayjs-nuxt",
+        {
+          "name": "@pinia-plugin-persistedstate/nuxt",
+          "version": "v1.2.0",
+        },
+        {
+          "name": "@pinia/nuxt",
+          "version": "v0.5.1",
+        },
+        {
+          "name": "@unocss/nuxt",
+          "version": "v0.59.0",
+        },
+        {
+          "name": "@vant/nuxt",
+          "version": "v1.0.4",
+        },
+        {
+          "name": "@vueuse/nuxt",
+          "version": "v10.9.0",
+        },
+        {
+          "name": "dayjs-nuxt",
+          "version": "v2.1.9",
+        },
       ]
     `)
   })
