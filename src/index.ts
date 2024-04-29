@@ -30,8 +30,16 @@ export function activate(context: ExtensionContext) {
                 const currentModules = node.value.elements
                 const currentModulesNames = currentModules.map((item) => {
                   // @ts-expect-error missing type
-                  return item?.value
+                  if (item.type === 'StringLiteral')
+                    return item?.value
+                  else if (item?.type === 'ArrayExpression')
+                    // @ts-expect-error missing type
+                    return item.elements[0]?.value
+                  else
+                    return null
                 })
+
+                channel.appendLine(JSON.stringify(currentModulesNames))
 
                 const isHitOnModules = currentModules.findIndex((item) => {
                   if (item?.loc?.start.line === position.line + 1 && item?.loc?.start.column === position.character - 1)
@@ -41,11 +49,11 @@ export function activate(context: ExtensionContext) {
                 })
 
                 if (isHitOnModules > -1) {
-                  completionItems = nuxtModules.filter(item => !currentModulesNames.includes(item)).map((item) => {
+                  completionItems = nuxtModules.filter(item => !currentModulesNames.includes(item.name)).map((item) => {
                     return {
-                      label: item,
-                      kind: 3,
-                      insertText: item,
+                      label: item.name,
+                      kind: 20,
+                      detail: item.version,
                     }
                   })
                 }

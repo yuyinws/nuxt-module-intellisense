@@ -1,5 +1,6 @@
 import { dirname, resolve } from 'node:path'
 import { readFileSync } from 'node:fs'
+import type { NuxtModule, Package } from './types'
 
 function guessIsNuxtModule(dependency: string) {
   return dependency.includes('nuxt') && dependency !== 'nuxt'
@@ -8,17 +9,21 @@ function guessIsNuxtModule(dependency: string) {
 export function parsePkg(projectPath: string) {
   try {
     const pkgPath = resolve(dirname(projectPath), './package.json')
-    const pkgContent = JSON.parse(readFileSync(pkgPath, 'utf-8'))
-    const nuxtModules: string[] = []
+    const pkgContent: Package = JSON.parse(readFileSync(pkgPath, 'utf-8'))
+    const nuxtModules: NuxtModule[] = []
 
-    const dependencies = {
+    const dependencies: Record<string, string> = {
       ...pkgContent?.dependencies,
       ...pkgContent?.devDependencies,
     }
 
-    Object.keys(dependencies).forEach((key) => {
-      if (guessIsNuxtModule(key))
-        nuxtModules.push(key)
+    Object.entries(dependencies).forEach(([key, value]) => {
+      if (guessIsNuxtModule(key)) {
+        nuxtModules.push({
+          name: key,
+          version: `v${value.replace(/^[\^~]/, '')}`,
+        })
+      }
     })
 
     return nuxtModules
